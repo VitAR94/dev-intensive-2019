@@ -29,21 +29,27 @@ fun Date.add(value: Int, units: TimeUnit = TimeUnit.SECOND): Date {
 }
 
 fun Date.humanizeDiff(date: Date = Date()): String {
+    fun minuteStr(value: Long) = if(value in 2..4) "минуты" else "минут"
+    fun hourStr(value: Long) = if(value in 2..4) "часа" else "часов"
+    fun dayStr(value: Long) = if(value in 2..4) "дня" else "дней"
+
     val dif = date.time - this.time
     val s = when(abs(dif)){
-        in 0..MINUTE -> if(dif > 0) "несколько секунд назад" else "через несколько секунд"
+        in 0..SECOND -> "только что"
 
-        in MINUTE..2*MINUTE-1 -> if(dif > 0) "1 минуту назад" else "через 1 минуту"
-        in 2*MINUTE..5*MINUTE-1 -> if(dif > 0) "${dif/ MINUTE} минуты назад" else "через ${abs(dif)/ MINUTE} минуты"
-        in 5*MINUTE..HOUR-1 -> if(dif > 0) "${dif/ MINUTE} минут назад" else "через ${abs(dif)/ MINUTE} минут"
+        in SECOND..45*SECOND -> if(dif > 0) "несколько секунд назад" else "через несколько секунд"
 
-        in HOUR..2*HOUR-1 -> if(dif > 0) "1 час назад" else "через 1 час"
-        in 2*HOUR..5*HOUR-1 -> if(dif > 0) "${dif/ HOUR} часа назад" else "через ${abs(dif)/ HOUR} часа"
-        in 5*HOUR..DAY-1 -> if(dif > 0) "${dif/ HOUR} часов назад" else "через ${abs(dif)/ HOUR} часов"
+        in 45*SECOND..75*SECOND -> if(dif > 0) "минуту назад" else "через минуту"
+        in 75*SECOND..45*MINUTE -> if(dif > 0) "${dif/ MINUTE} ${minuteStr(dif/ MINUTE)} назад"
+                                    else "через ${abs(dif)/ MINUTE} ${minuteStr(abs(dif)/ MINUTE)}"
 
-        in DAY..2*DAY-1 -> if(dif > 0) "1 день назад" else "через 1 день"
-        in 2*DAY..5*DAY-1 -> if(dif > 0) "${dif/ DAY} дня назад" else "через ${abs(dif)/ DAY} дня"
-        in 5*DAY..365*DAY-1 -> if(dif > 0) "${dif/ DAY} дней назад" else "через ${abs(dif)/ DAY} дней"
+        in 45*MINUTE..75*MINUTE -> if(dif > 0) "час назад" else "через час"
+        in 75*MINUTE..22*HOUR -> if(dif > 0) "${dif/ HOUR} ${hourStr(dif/ HOUR)} назад"
+                                    else "через ${abs(dif)/ HOUR} ${hourStr(abs(dif)/ HOUR)}"
+
+        in 22*HOUR..26*HOUR -> if(dif > 0) "день назад" else "через день"
+        in 26*HOUR..360*DAY -> if(dif > 0) "${dif/ DAY} ${dayStr(dif/ DAY)} назад"
+                                    else "через ${abs(dif)/ DAY} ${dayStr(abs(dif)/ DAY)}"
 
         else -> if(dif > 0) "более года назад" else "более чем через год"
     }
