@@ -9,14 +9,9 @@ import ru.skillbranch.devintensive.utils.DataGenerator
 object ChatRepository {
     private val chats = CacheManager.loadChats()
 
-    fun loadChats(): List<Chat> {
-        return DataGenerator.generateChats(10)
-    }
-
-    /*fun loadChats(): MutableLiveData<List<Chat>> {
+    fun loadChats(): MutableLiveData<List<Chat>> {
         return chats
     }
-*/
     fun update(chat: Chat) {
         val copy = chats.value!!.toMutableList()
         val ind = chats.value!!.indexOfFirst { it.id == chat.id }
@@ -29,6 +24,5 @@ object ChatRepository {
         val ind = chats.value!!.indexOfFirst { it.id == chatId }
         return chats.value!!.getOrNull(ind)
     }
-
 
 }

@@ -3,6 +3,7 @@ package ru.skillbranch.devintensive.models.data
 import androidx.annotation.VisibleForTesting
 import ru.skillbranch.devintensive.extensions.shortFormat
 import ru.skillbranch.devintensive.models.BaseMessage
+import ru.skillbranch.devintensive.models.TextMessage
 import ru.skillbranch.devintensive.utils.Utils
 import java.util.*
 
@@ -14,22 +15,17 @@ data class Chat(
     var isArchived: Boolean = false
 ) {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun unreadableMessageCount(): Int {
-        //TODO implement me
-        return 0
-    }
+    fun unreadableMessageCount(): Int = messages.fold(0) { acc, baseMessage -> if(!baseMessage.isReaded) acc+1 else acc}
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun lastMessageDate(): Date? {
-        //TODO implement me
-        return Date()
-    }
+    fun lastMessageDate(): Date? = messages.maxBy { it.date }?.date
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun lastMessageShort(): Pair<String, String?> = when(val lastMessage = messages.lastOrNull()){
-        //TODO implement me
-        null -> "сообщений еще нет" to ""
-        else-> "есть сообщение" to ""
+    fun lastMessageShort(): Pair<String, String?> = when(val lastMessage = messages.maxBy { it.date }){
+        null -> "Сообщений еще нет" to null
+        else-> when(lastMessage){
+            is TextMessage -> lastMessage.text?:""
+            else -> "${lastMessage.from.firstName} - отправил фото"} to lastMessage.from.firstName
     }
 
     private fun isSingle(): Boolean = members.size == 1
